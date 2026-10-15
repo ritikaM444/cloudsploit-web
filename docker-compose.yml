@@ -1,0 +1,20 @@
+services:
+  cloudsploit-web:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      DATA_DIR: /data
+      SCANNER_PATH: /app/cloudsploit/index.js
+      # Set to "true" when serving over HTTPS
+      COOKIE_SECURE: "false"
+      CORS_ORIGIN: http://localhost:3000
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET (npm --prefix server run genkey)}
+      MASTER_KEY: ${MASTER_KEY:?set MASTER_KEY (npm --prefix server run genkey)}
+    volumes:
+      - ./data:/data
+    restart: unless-stopped

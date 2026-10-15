@@ -1,0 +1,13 @@
+**/node_modules
+**/dist
+**/data
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+.git
+.gitignore
+**/scan-results*.json
+**/gcp-key.json
+**/*.sqlite
+**/*.sqlite-*

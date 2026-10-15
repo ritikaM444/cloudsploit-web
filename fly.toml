@@ -1,0 +1,35 @@
+# Fly.io config — deploy with:  fly launch --no-deploy  then  fly deploy
+# Then set secrets:  fly secrets set JWT_SECRET=... MASTER_KEY=...
+# Generate the values locally with:  npm --prefix server run genkey
+#
+# Change `app` to a globally-unique name. Fly builds the included Dockerfile.
+
+app = "cloudsploit-web"
+primary_region = "iad"
+
+[build]
+
+[env]
+  NODE_ENV = "production"
+  HOST = "0.0.0.0"
+  PORT = "3000"
+  DATA_DIR = "/data"
+  COOKIE_SECURE = "true"
+  SCANNER_PATH = "/app/cloudsploit/index.js"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+# Persistent volume for the SQLite database (create once):
+#   fly volumes create cloudsploit_data --size 1
+[mounts]
+  source = "cloudsploit_data"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

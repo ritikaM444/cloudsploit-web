@@ -1,0 +1,42 @@
+# Render Blueprint — one-click deploy for CloudSploit Web.
+# Push this repo to GitHub, then in Render: New + -> Blueprint -> pick the repo.
+# Render reads this file automatically.
+#
+# IMPORTANT: after the first deploy, set the MASTER_KEY secret in the dashboard.
+#   Generate it locally with:  npm --prefix server run genkey
+#   (Persistent disks require an instance with a disk; on the free tier the
+#    SQLite DB may reset when the service is redeployed or spun down.)
+
+services:
+  - type: web
+    name: cloudsploit-web
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run install:all && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: COOKIE_SECURE
+        value: true
+      # Where the SQLite DB + scan artifacts live. Mount a disk here for persistence.
+      - key: DATA_DIR
+        value: /var/data
+      # Path to the scanner entrypoint, relative to the server/ working dir.
+      - key: SCANNER_PATH
+        value: ../cloudsploit/index.js
+      # A long random string (>= 32 chars). Render generates one for you.
+      - key: JWT_SECRET
+        generateValue: true
+      # base64-encoded 32-byte key used to encrypt cloud credentials at rest.
+      # Generate with `npm --prefix server run genkey` and paste it in the dashboard.
+      - key: MASTER_KEY
+        sync: false
+    disk:
+      name: cloudsploit-data
+      mountPath: /var/data
+      sizeGB: 1
