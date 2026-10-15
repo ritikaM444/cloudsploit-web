@@ -36,7 +36,4 @@ services:
       # Generate with `npm --prefix server run genkey` and paste it in the dashboard.
       - key: MASTER_KEY
         sync: false
-    disk:
-      name: cloudsploit-data
-      mountPath: /var/data
-      sizeGB: 1
+    
